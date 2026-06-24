@@ -108,11 +108,43 @@
 
 ## 8. 预约接口（/api/bookings/*）
 
-> W7 落地。
+| Method | Path | 权限 | 说明 |
+|---|---|---|---|
+| GET | `/api/bookings` | 已登录 | member 仅看自己；staff 可 `?member_id=&session_id=&status=` |
+| POST | `/api/bookings` | 已登录 | member：`{session_id}`；staff 必填 `{session_id, member_id}` |
+| GET | `/api/bookings/{id}` | 已登录 | member 越权 → 403 |
+| POST | `/api/bookings/{id}/cancel` | 已登录 | member 仅取消自己；距开课 ≤ 2h 不能自助取消（staff 可绕过） |
+
+**预约规则（service 层强制）**：
+
+- 会员必须 active 且 `is_active=True`
+- session 必须 `status=scheduled` 且 `start_at > now`
+- 挑卡顺序：期限卡 end_date 升序 → id 升序；次卡仅在没有期限卡可用时使用
+- 同会员同 session 不能同时存在非 cancelled 预约（partial unique 索引 + 预查询双重兜底）
+- 不超过 `session.capacity`
+- 预约阶段**不**扣次卡，签到时才扣
+
+**业务错误**：`member_not_found` (404)、`member_disabled` (403)、`session_not_found` (404)、`session_not_open` (400)、`session_already_started` (400)、`no_usable_card` (403)、`already_booked` (409)、`session_full` (409)、`booking_not_found` (404)、`forbidden` (403)、`booking_locked` (400)、`cancel_cutoff_passed` (400)。
+
+**返回体（Read）**：`id, member_id, member_name, session_id, class_name, start_at, end_at, card_id, card_no, status, source, booked_at, cancelled_at, checked_in_at`。
 
 ## 9. 签到接口（/api/attendance/*）
 
-> W7 落地。
+| Method | Path | 权限 | 说明 |
+|---|---|---|---|
+| GET | `/api/attendance` | 已登录 | member 仅看自己；staff 可 `?member_id=&session_id=` |
+| POST | `/api/attendance` | 已登录 | `{booking_id}`；member 仅可为自己签到 |
+
+**签到规则**：
+
+- 仅 `booking.status=booked` 可签到（已 cancelled / attended / no_show 均拒绝）
+- session 必须 `status=scheduled`
+- 次卡（`remaining_visits IS NOT NULL`）此时扣 1 次；`remaining_visits ≤ 0` → `card_visits_exhausted`
+- 同一 booking 重复签到 → `already_checked_in` (409)
+
+**业务错误**：`booking_not_found` (404)、`forbidden` (403)、`already_checked_in` (409)、`booking_not_active` (400)、`session_not_open` (400)、`card_visits_exhausted` (400)。
+
+**返回体（Read）**：`id, booking_id, member_id, member_name, session_id, class_name, checked_in_at, checked_in_by`。
 
 ## 10. 统计接口（/api/stats/*）
 

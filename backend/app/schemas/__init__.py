@@ -7,6 +7,7 @@
 
 校验失败 → ``marshmallow.ValidationError``，路由层捕获返回 400。
 """
+from .booking import AttendanceReadSchema, BookingCreateSchema, BookingReadSchema
 from .card import CardIssueSchema, CardReadSchema
 from .card_type import CardTypeCreateSchema, CardTypeReadSchema, CardTypeUpdateSchema
 from .class_ import (
@@ -21,6 +22,9 @@ from .coach import CoachCreateSchema, CoachReadSchema, CoachUpdateSchema
 from .member import MemberCreateSchema, MemberReadSchema, MemberUpdateSchema
 
 __all__ = [
+    "AttendanceReadSchema",
+    "BookingCreateSchema",
+    "BookingReadSchema",
     "CardIssueSchema",
     "CardReadSchema",
     "CardTypeCreateSchema",

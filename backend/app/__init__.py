@@ -51,7 +51,9 @@ def _init_extensions(app: Flask) -> None:
 
 
 def _register_blueprints(app: Flask) -> None:
+    from .api.attendance import bp as attendance_bp
     from .api.auth import bp as auth_bp
+    from .api.bookings import bp as bookings_bp
     from .api.card_types import bp as card_types_bp
     from .api.cards import bp as cards_bp
     from .api.classes import bp as classes_bp
@@ -68,6 +70,8 @@ def _register_blueprints(app: Flask) -> None:
     app.register_blueprint(cards_bp, url_prefix="/api/cards")
     app.register_blueprint(classes_bp, url_prefix="/api/classes")
     app.register_blueprint(sessions_bp, url_prefix="/api/sessions")
+    app.register_blueprint(bookings_bp, url_prefix="/api/bookings")
+    app.register_blueprint(attendance_bp, url_prefix="/api/attendance")
 
 
 def _register_error_handlers(app: Flask) -> None:
