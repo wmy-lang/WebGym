@@ -9,18 +9,29 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 const menu = [
-  { path: '/admin', title: '工作台', icon: 'House' },
-  { path: '/admin/members', title: '会员管理', icon: 'User' },
-  { path: '/admin/cards', title: '会员卡', icon: 'CreditCard' },
-  { path: '/admin/coaches', title: '教练', icon: 'Avatar' },
-  { path: '/admin/classes', title: '课程与排课', icon: 'Calendar' },
-  { path: '/admin/bookings', title: '预约与签到', icon: 'Tickets' },
-  { path: '/admin/stats', title: '统计', icon: 'DataAnalysis' },
+  { path: '/admin', title: '工作台' },
+  { path: '/admin/members', title: '会员管理' },
+  { path: '/admin/cards', title: '会员卡' },
+  { path: '/admin/card-types', title: '卡类型', roles: ['admin'] },
+  { path: '/admin/coaches', title: '教练' },
+  { path: '/admin/classes', title: '课程' },
+  { path: '/admin/sessions', title: '排课' },
+  { path: '/admin/bookings', title: '预约与签到' },
+  { path: '/admin/stats', title: '统计' },
 ]
 
+const visibleMenu = computed(() =>
+  menu.filter((m) => !m.roles || (authStore.role && m.roles.includes(authStore.role))),
+)
+
 const activeMenu = computed(() => {
-  return menu.find((m) => route.path.startsWith(m.path) && m.path !== '/admin')?.path
-    ?? '/admin'
+  // 精确匹配优先；否则取最长前缀
+  const exact = menu.find((m) => m.path === route.path)
+  if (exact) return exact.path
+  const prefixed = menu
+    .filter((m) => m.path !== '/admin' && route.path.startsWith(m.path))
+    .sort((a, b) => b.path.length - a.path.length)[0]
+  return prefixed?.path ?? '/admin'
 })
 
 async function onLogout() {
@@ -45,7 +56,7 @@ async function onLogout() {
         <span class="tag">后台</span>
       </div>
       <el-menu :default-active="activeMenu" router :collapse="false" class="menu">
-        <el-menu-item v-for="m in menu" :key="m.path" :index="m.path">
+        <el-menu-item v-for="m in visibleMenu" :key="m.path" :index="m.path">
           {{ m.title }}
         </el-menu-item>
       </el-menu>
