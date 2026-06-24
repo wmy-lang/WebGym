@@ -54,9 +54,11 @@ def _register_blueprints(app: Flask) -> None:
     from .api.auth import bp as auth_bp
     from .api.card_types import bp as card_types_bp
     from .api.cards import bp as cards_bp
+    from .api.classes import bp as classes_bp
     from .api.coaches import bp as coaches_bp
     from .api.members import bp as members_bp
     from .api.ping import bp as ping_bp
+    from .api.sessions import bp as sessions_bp
 
     app.register_blueprint(ping_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
@@ -64,6 +66,8 @@ def _register_blueprints(app: Flask) -> None:
     app.register_blueprint(coaches_bp, url_prefix="/api/coaches")
     app.register_blueprint(card_types_bp, url_prefix="/api/card-types")
     app.register_blueprint(cards_bp, url_prefix="/api/cards")
+    app.register_blueprint(classes_bp, url_prefix="/api/classes")
+    app.register_blueprint(sessions_bp, url_prefix="/api/sessions")
 
 
 def _register_error_handlers(app: Flask) -> None:

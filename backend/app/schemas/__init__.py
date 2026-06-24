@@ -9,6 +9,14 @@
 """
 from .card import CardIssueSchema, CardReadSchema
 from .card_type import CardTypeCreateSchema, CardTypeReadSchema, CardTypeUpdateSchema
+from .class_ import (
+    ClassDefinitionCreateSchema,
+    ClassDefinitionReadSchema,
+    ClassDefinitionUpdateSchema,
+    ClassSessionCreateSchema,
+    ClassSessionReadSchema,
+    ClassSessionUpdateSchema,
+)
 from .coach import CoachCreateSchema, CoachReadSchema, CoachUpdateSchema
 from .member import MemberCreateSchema, MemberReadSchema, MemberUpdateSchema
 
@@ -18,6 +26,12 @@ __all__ = [
     "CardTypeCreateSchema",
     "CardTypeReadSchema",
     "CardTypeUpdateSchema",
+    "ClassDefinitionCreateSchema",
+    "ClassDefinitionReadSchema",
+    "ClassDefinitionUpdateSchema",
+    "ClassSessionCreateSchema",
+    "ClassSessionReadSchema",
+    "ClassSessionUpdateSchema",
     "CoachCreateSchema",
     "CoachReadSchema",
     "CoachUpdateSchema",

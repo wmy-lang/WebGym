@@ -78,9 +78,33 @@
 
 错误码：`name_taken` (409)、`validation_error` (400)、`not_found` (404)。
 
-## 7. 课程与排课接口（/api/classes/*）
+## 7. 课程与排课接口（/api/classes/* + /api/sessions/*）
 
-> W6 落地。
+### 7.1 课程定义 `/api/classes/*`
+
+| Method | Path | 权限 | 说明 |
+|---|---|---|---|
+| GET | `/api/classes` | 已登录 | member 仅看 active；staff 可 `?include_inactive=1` |
+| POST | `/api/classes` | staff | `{name, description?, coach_id?, capacity, duration_minutes}` |
+| GET | `/api/classes/{id}` | 已登录 | member 看 inactive → 404 |
+| PATCH | `/api/classes/{id}` | staff | 局部更新 |
+| DELETE | `/api/classes/{id}` | staff | 软删除 |
+
+### 7.2 排课 `/api/sessions/*`
+
+| Method | Path | 权限 | 说明 |
+|---|---|---|---|
+| GET | `/api/sessions` | 已登录 | 过滤：`?from=ISO&to=ISO&class_def_id=&coach_id=&status=` |
+| POST | `/api/sessions` | staff | `{class_def_id, start_at, end_at?, coach_id?, capacity?, location?}`；缺省字段从 class_def 继承 |
+| GET | `/api/sessions/{id}` | 已登录 | 单条详情 |
+| PATCH | `/api/sessions/{id}` | staff | 仅当 `status=scheduled` 时可改 |
+| POST | `/api/sessions/{id}/cancel` | staff | 切 `cancelled`，连带把 `booked` 预约置 `cancelled` |
+| POST | `/api/sessions/{id}/finish` | staff | 切 `finished`，未签到的 `booked` → `no_show` |
+
+`ClassSession` 返回体新增 `booked_count`：当前有效预约数（非 cancelled），便于前端判满员。
+
+错误码：`class_not_found`、`coach_not_found`、`invalid_datetime`、`invalid_status`、`session_not_scheduled`、`validation_error`。
+
 
 ## 8. 预约接口（/api/bookings/*）
 

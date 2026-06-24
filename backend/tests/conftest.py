@@ -97,3 +97,26 @@ def card_types(app):
     db.session.add_all([year, visit])
     db.session.commit()
     return {"year": year.id, "visit": visit.id}
+
+
+@pytest.fixture
+def coach(app):
+    from app.models import Coach
+
+    c = Coach(name="李教练", specialty="瑜伽")
+    db.session.add(c)
+    db.session.commit()
+    return c.id
+
+
+@pytest.fixture
+def class_def(app, coach):
+    """一个标准课程定义：60 分钟、容量 5。"""
+    from app.models import ClassDefinition
+
+    cls = ClassDefinition(
+        name="瑜伽入门", description="基础瑜伽", coach_id=coach, capacity=5, duration_minutes=60
+    )
+    db.session.add(cls)
+    db.session.commit()
+    return cls.id
