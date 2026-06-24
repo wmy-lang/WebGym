@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.venv/
+backend/.venv/
+backend/instance/*.db
+backend/instance/*.db-journal
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 中间产物
+*.docx
+任务书.docx
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
