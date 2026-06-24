@@ -20,6 +20,7 @@ def create_app(config_name: str | None = None) -> Flask:
     _init_extensions(app)
     _register_blueprints(app)
     _register_error_handlers(app)
+    _register_cli(app)
 
     return app
 
@@ -41,6 +42,13 @@ def _init_extensions(app: Flask) -> None:
     def _unauthorized():
         return jsonify(error="unauthorized"), 401
 
+    # 注册 user_loader；放在这里以避免 models 被全局导入时绑不上 login_manager
+    from . import models  # noqa: F401  确保 metadata 完整
+
+    @login_manager.user_loader
+    def _load_user(user_id: str):
+        return db.session.get(models.User, int(user_id))
+
 
 def _register_blueprints(app: Flask) -> None:
     from .api.ping import bp as ping_bp
@@ -56,3 +64,9 @@ def _register_error_handlers(app: Flask) -> None:
     @app.errorhandler(405)
     def _method_not_allowed(_e):
         return jsonify(error="method_not_allowed"), 405
+
+
+def _register_cli(app: Flask) -> None:
+    from .cli import register_cli
+
+    register_cli(app)
