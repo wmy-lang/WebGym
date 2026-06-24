@@ -53,6 +53,7 @@ def _init_extensions(app: Flask) -> None:
 def _register_blueprints(app: Flask) -> None:
     from .api.auth import bp as auth_bp
     from .api.card_types import bp as card_types_bp
+    from .api.cards import bp as cards_bp
     from .api.coaches import bp as coaches_bp
     from .api.members import bp as members_bp
     from .api.ping import bp as ping_bp
@@ -62,6 +63,7 @@ def _register_blueprints(app: Flask) -> None:
     app.register_blueprint(members_bp, url_prefix="/api/members")
     app.register_blueprint(coaches_bp, url_prefix="/api/coaches")
     app.register_blueprint(card_types_bp, url_prefix="/api/card-types")
+    app.register_blueprint(cards_bp, url_prefix="/api/cards")
 
 
 def _register_error_handlers(app: Flask) -> None:

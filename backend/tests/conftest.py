@@ -11,7 +11,7 @@ from flask import Blueprint, jsonify
 
 from app import create_app
 from app.extensions import db
-from app.models import MemberProfile, User, UserRole
+from app.models import CardType, MemberProfile, User, UserRole
 from app.utils.auth import admin_required, member_required, role_required, staff_required
 
 
@@ -85,3 +85,15 @@ def do_login(client):
         return login(client, username, password)
 
     return _do
+
+
+@pytest.fixture
+def card_types(app):
+    """常用卡种：年卡(期限) + 10次卡(次数)。"""
+    from decimal import Decimal
+
+    year = CardType(name="年卡", duration_days=365, price=Decimal("1888.00"))
+    visit = CardType(name="10次卡", total_visits=10, price=Decimal("299.00"))
+    db.session.add_all([year, visit])
+    db.session.commit()
+    return {"year": year.id, "visit": visit.id}

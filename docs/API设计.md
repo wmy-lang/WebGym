@@ -38,7 +38,23 @@
 
 ## 4. 卡接口（/api/cards/*）
 
-> W5 落地。
+| Method | Path | 权限 | 说明 |
+|---|---|---|---|
+| GET | `/api/cards` | 已登录 | staff 可全部；member 只看自己 |
+| GET | `/api/cards/{id}` | 已登录 | 同上；member 越权 → 403 |
+| POST | `/api/cards` | staff | 办卡 `{member_id, card_type_id, start_date?}` |
+| POST | `/api/cards/{id}/renew` | staff | 续费：期限+duration / 次数+visits |
+| POST | `/api/cards/{id}/freeze` | staff | active → frozen |
+| POST | `/api/cards/{id}/unfreeze` | staff | frozen → active（已过期则 → expired） |
+| POST | `/api/cards/{id}/cancel` | staff | 任意非 cancelled → cancelled（终态） |
+| POST | `/api/cards/sweep-expired` | staff | 批量把已过期卡置 expired |
+
+**列表过滤**：`?member_id=`（staff 用）/ `?status=active|frozen|expired|cancelled`
+
+**业务错误**（HTTP 400/404）：`member_not_found`、`member_disabled`、`card_type_not_found`、`card_not_found`、`card_frozen`、`card_cancelled`、`card_not_active`、`card_not_frozen`。
+
+状态机详见 `docs/数据库设计.md`。
+
 
 ## 5. 教练接口（/api/coaches/*）
 
