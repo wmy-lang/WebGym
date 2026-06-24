@@ -51,9 +51,11 @@ def _init_extensions(app: Flask) -> None:
 
 
 def _register_blueprints(app: Flask) -> None:
+    from .api.auth import bp as auth_bp
     from .api.ping import bp as ping_bp
 
     app.register_blueprint(ping_bp, url_prefix="/api")
+    app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
 
 def _register_error_handlers(app: Flask) -> None:
